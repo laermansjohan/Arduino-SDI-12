@@ -5,6 +5,9 @@
 [//]: # ( @section mainpage_intro Introduction )
 ## Introduction
 
+Forked from [EnviroDIY] https://github.com/EnviroDIY/Arduino-SDI-12. I used this library for a SAMD21G18 project and had TC3 already in use for a certain clock frequency on pin PA17.
+This library has a few minor changes and uses TC4 instead of TC3. GCLK remained at 4.
+
 This is an Arduino library for SDI-12 communication with a wide variety of environmental sensors.
 It provides a general software solution, without requiring any additional hardware, to implement the SDI-12 communication protocol between an Arduino-based data logger and SDI-12-enabled sensors.
 
