@@ -229,32 +229,33 @@ void SDI12Timer::configSDI12TimerPrescale(void) {
                            // ^^ & ~ for DIVSEL because not not divided
   while (GCLK->STATUS.bit.SYNCBUSY) {}  // Wait for synchronization
 
-  // Feed GCLK4 to TC3 (also feeds to TCC2, the two must have the same source)
-  // TC3 (and TCC2) seem to be free, so I'm using them
+  // Feed GCLK4 to TC4 (also feeds to TCC2, the two must have the same source)
+  // TC4 (and TCC2) seem to be free, so I'm using them
   // TC4 is used by Tone, TC5 is tied to the same clock as TC4
   // TC6 and TC7 are not available on all boards
   REG_GCLK_CLKCTRL = GCLK_CLKCTRL_GEN_GCLK4 |  // Select Generic Clock Generator 4
     GCLK_CLKCTRL_CLKEN |                       // Enable the generic clock generator
-    GCLK_CLKCTRL_ID_TCC2_TC3;  // Feed the Generic Clock Generator 4 to TCC2 and TC3
+    GCLK_CLKCTRL_ID_TC4_TC5;  // Feed the Generic Clock Generator 4 to TC4 and TC5
   while (GCLK->STATUS.bit.SYNCBUSY) {}  // Wait for synchronization
 
-  REG_TC3_CTRLA |=
+  REG_TC4_CTRLA |=
     TC_CTRLA_PRESCALER_DIV1024 |  // Set prescaler to 1024, 16MHz/1024 = 15.625kHz
-    TC_CTRLA_WAVEGEN_NFRQ |       // Put the timer TC3 into normal frequency (NFRQ) mode
-    TC_CTRLA_MODE_COUNT8 |        // Put the timer TC3 into 8-bit mode
-    TC_CTRLA_ENABLE;              // Enable TC3
-  while (TC3->COUNT16.STATUS.bit.SYNCBUSY) {}  // Wait for synchronization
+    TC_CTRLA_WAVEGEN_NFRQ |       // Put the timer TC4 into normal frequency (NFRQ) mode
+    TC_CTRLA_MODE_COUNT8 |        // Put the timer TC4 into 8-bit mode
+    TC_CTRLA_ENABLE;              // Enable TC4
+  while (TC4->COUNT16.STATUS.bit.SYNCBUSY) {}  // Wait for synchronization
 }
+
 // NOT resetting the SAMD timer settings
 void SDI12Timer::resetSDI12TimerPrescale(void) {
   // Disable TCx
-  TC3->COUNT16.CTRLA.reg &= ~TC_CTRLA_ENABLE;
-  while (TC3->COUNT16.STATUS.bit.SYNCBUSY) {}
+  TC4->COUNT16.CTRLA.reg &= ~TC_CTRLA_ENABLE;
+  while (TC4->COUNT16.STATUS.bit.SYNCBUSY) {}
 
   // Reset TCx
-  TC3->COUNT16.CTRLA.reg = TC_CTRLA_SWRST;
-  while (TC3->COUNT16.STATUS.bit.SYNCBUSY) {}
-  while (TC3->COUNT16.CTRLA.bit.SWRST) {}
+  TC4->COUNT16.CTRLA.reg = TC_CTRLA_SWRST;
+  while (TC4->COUNT16.STATUS.bit.SYNCBUSY) {}
+  while (TC4->COUNT16.CTRLA.bit.SWRST) {}
 
   // Disable generic clock generator
   REG_GCLK_GENCTRL = GCLK_GENCTRL_ID(4) &  // Select GCLK4
