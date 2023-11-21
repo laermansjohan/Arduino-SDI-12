@@ -214,13 +214,13 @@ void SDI12Timer::configSDI12TimerPrescale(void) {
   // Many examples use clock generator 4.. consider yourself warned!
   // I would use a higher clock number, but some of the cores don't include them for
   // some reason
-  REG_GCLK_GENDIV = GCLK_GENDIV_ID(4) |  // Select Generic Clock Generator 4
+  REG_GCLK_GENDIV = GCLK_GENDIV_ID(1) |  // Select Generic Clock Generator 4
     GCLK_GENDIV_DIV(3);                  // Divide the clock source by divisor 3
   while (GCLK->STATUS.bit.SYNCBUSY) {}   // Wait for synchronization
 
 
   // Write the generic clock generator 4 configuration
-  REG_GCLK_GENCTRL = (GCLK_GENCTRL_ID(4) |        // Select GCLK4
+  REG_GCLK_GENCTRL = (GCLK_GENCTRL_ID(1) |        // Select GCLK1
                       GCLK_GENCTRL_SRC_DFLL48M |  // Select the 48MHz clock source
                       GCLK_GENCTRL_IDC |     // Set the duty cycle to 50/50 HIGH/LOW
                       GCLK_GENCTRL_GENEN) &  // Enable the generic clock clontrol
@@ -229,13 +229,11 @@ void SDI12Timer::configSDI12TimerPrescale(void) {
                            // ^^ & ~ for DIVSEL because not not divided
   while (GCLK->STATUS.bit.SYNCBUSY) {}  // Wait for synchronization
 
-  // Feed GCLK4 to TC4 (also feeds to TCC2, the two must have the same source)
-  // TC4 (and TCC2) seem to be free, so I'm using them
-  // TC4 is used by Tone, TC5 is tied to the same clock as TC4
+  // Feed GCLK1 to TC4 and TC5
   // TC6 and TC7 are not available on all boards
-  REG_GCLK_CLKCTRL = GCLK_CLKCTRL_GEN_GCLK4 |  // Select Generic Clock Generator 4
+  REG_GCLK_CLKCTRL = GCLK_CLKCTRL_GEN_GCLK1 |  // Select Generic Clock Generator 1
     GCLK_CLKCTRL_CLKEN |                       // Enable the generic clock generator
-    GCLK_CLKCTRL_ID_TC4_TC5;  // Feed the Generic Clock Generator 4 to TC4 and TC5
+    GCLK_CLKCTRL_ID_TC4_TC5;  // Feed the Generic Clock Generator 1 to TC4 and TC5
   while (GCLK->STATUS.bit.SYNCBUSY) {}  // Wait for synchronization
 
   REG_TC4_CTRLA |=
@@ -258,7 +256,7 @@ void SDI12Timer::resetSDI12TimerPrescale(void) {
   while (TC4->COUNT16.CTRLA.bit.SWRST) {}
 
   // Disable generic clock generator
-  REG_GCLK_GENCTRL = GCLK_GENCTRL_ID(4) &  // Select GCLK4
+  REG_GCLK_GENCTRL = GCLK_GENCTRL_ID(1) &  // Select GCLK4
     ~GCLK_GENCTRL_GENEN;                   // Disable the generic clock control
   while (GCLK->STATUS.bit.SYNCBUSY) {}     // Wait for synchronization
 }
