@@ -425,7 +425,7 @@ class SDI12Timer {
  * - Internal prescaler
  * - Can be used with DMA and to trigger DMA transactions
  */
-#define TIMER_IN_USE_STR "GCLK2-TC4"
+#define TIMER_IN_USE_STR "GCLK5-TC4"
 /**
  * @brief The c macro name for the assembly timer to use
  *
